@@ -109,7 +109,7 @@ int main() {
             cout << i << " ";
         }
 
-        cout << "\ndoamneAjuta";
+        cout << "\ndoamneAjutaaaaa";
     }
 
 
