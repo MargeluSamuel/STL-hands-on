@@ -1,23 +1,32 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <queue>
 #include <fstream>
 
 using namespace std;
 
 string currentDepartment;
+int currentDuration;
 
 struct Patient {
     string problem, department;
+    int duration, priority;
+
+    bool operator < (const Patient& other) const {
+        return priority < other.priority;
+    }
 };
 
 struct Doctor {
-    string name, department, patientsProblem = "";
+    string name, department;
+    int availability = 0;
+    vector<string> patientsProblem;
 };
 
 
 bool departmentMatches(Doctor doctor) {
-    if ((doctor.patientsProblem == "") && (currentDepartment == doctor.department)) {
+    if ((currentDepartment == doctor.department) && (currentDuration + doctor.availability <= 8)) {
         return true;
     }
     else {
@@ -29,30 +38,59 @@ bool departmentMatches(Doctor doctor) {
 int main() {
 
     int numberOfDoctors, numberOfPatients;
-    vector<Patient> patients; vector<Doctor> doctors; vector<Doctor> sol;
+    vector<Doctor> doctors; vector<Doctor> sol;
+    priority_queue<Patient> patients;
 
 
 
-    ifstream fin("D:\\Exercitii\\Facultate\\netrom\\Repos\\Fork-STL-hands-on.git\\HandsOn-Input.txt");
+    ifstream fin("db.txt");
 
     fin >> numberOfPatients;
 
     for (int i = 0; i < numberOfPatients; i++) {
         string problem, department;
+        int priority, duration;
 
-        fin >> problem >> department;
+        fin >> problem >> department >> duration >> priority;
 
-        patients.push_back({ problem, department });
+        patients.push({ problem, department, duration, priority });
     }
+
+    /* while (!patients.empty()) {
+         Patient temp = patients.top();
+
+         cout << temp.priority;
+
+         patients.pop();
+     }*/
 
     fin >> numberOfDoctors;
 
-    for (int i = 0; i < numberOfPatients; i++) {
+    for (int i = 0; i < numberOfDoctors; i++) {
+
         string name, department;
 
         fin >> name >> department;
 
         doctors.push_back({ name, department });
+    }
+
+    while (!patients.empty()) {
+        Patient currentPatient = patients.top();
+
+        currentDuration = currentPatient.duration;
+        currentDepartment = currentPatient.department;
+
+        patients.pop();
+
+        auto doctor = find_if(doctors.begin(), doctors.end(), departmentMatches);
+
+        if (doctor != doctors.end()) {
+            doctor->availability += currentDuration;
+
+            doctor->patientsProblem.push_back(currentPatient.problem);
+            sol.push_back(*doctor);
+        }
     }
 
     // for (auto i : patients) {
@@ -63,19 +101,15 @@ int main() {
     //     cout << i.name << " " << i.department << "\n";
     // }
 
-    for (vector<Patient>::iterator pIt = patients.begin(); pIt < patients.end(); pIt++) {
 
-        currentDepartment = pIt->department;
-        vector<Doctor>::iterator dIt = find_if(doctors.begin(), doctors.end(), departmentMatches);
-
-        if (dIt != doctors.end()) {
-            dIt->patientsProblem = pIt->problem;
-            sol.push_back(*dIt);
-        }
-    }
 
     for (vector<Doctor>::iterator it = sol.begin(); it < sol.end(); it++) {
-        cout << it->name << " " << it->patientsProblem << "\n";
+        cout << it->name << " ";
+        for (auto i : it->patientsProblem) {
+            cout << i << " ";
+        }
+
+        cout << "\n";
     }
 
 
