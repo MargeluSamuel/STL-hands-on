@@ -100,7 +100,7 @@ int main() {
     // }
 
     // for (auto i : doctors) {
-    //     cout << i.name << " " << i.department << "\n";
+    //     cout << i.name << "merge?" << i.department << "\n";
     // }
 
 
