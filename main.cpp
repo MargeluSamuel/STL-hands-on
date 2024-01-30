@@ -89,6 +89,8 @@ int main() {
             doctor->availability += currentDuration;
 
             doctor->patientsProblem.push_back(currentPatient.problem);
+
+
             sol.push_back(*doctor);
         }
     }
@@ -103,13 +105,15 @@ int main() {
 
 
 
-    for (vector<Doctor>::iterator it = sol.begin(); it < sol.end(); it++) {
-        cout << it->name << " ";
-        for (auto i : it->patientsProblem) {
-            cout << i << " ";
-        }
+    for (vector<Doctor>::iterator it = doctors.begin(); it < doctors.end(); it++) {
+        if (it->patientsProblem.size() > 0) {
+            cout << it->name << " ";
+            for (auto i : it->patientsProblem) {
+                cout << i << " ";
+            }
 
-        cout << "\ndoamneAjutaaaaa";
+            cout << "\n";
+        }
     }
 
 
