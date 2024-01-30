@@ -60,7 +60,7 @@ int main() {
     // }
 
     // for (auto i : doctors) {
-    //     cout << i.name << " " << i.department << "\n";
+    //     cout << i.name << "salut" << i.department << "\n";
     // }
 
     for (vector<Patient>::iterator pIt = patients.begin(); pIt < patients.end(); pIt++) {
