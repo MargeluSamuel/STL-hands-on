@@ -1,55 +1,82 @@
 #include <iostream>
 #include <vector>
-#include <string>
 #include <algorithm>
 #include <fstream>
 
 using namespace std;
 
-struct Problem {
-    string name;
-    string speciality;
+string currentDepartment;
+
+struct Patient {
+    string problem, department;
 };
 
 struct Doctor {
-    string id;
-    string speciality;
+    string name, department, patientsProblem = "";
 };
 
-Problem currentProblem;
 
-bool matchesSpeciality(const Doctor &doctor) {
-    return doctor.speciality == currentProblem.speciality;
+bool departmentMatches(Doctor doctor) {
+    if ((doctor.patientsProblem == "") && (currentDepartment == doctor.department)) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
+
 int main() {
-    ifstream inFile("HandsOn-Input.txt");
-    
-    int n, m;
-    inFile >> n;
-    
-    vector<Problem> problems(n);
-    for (Problem &p : problems) {
-        inFile >> p.name >> p.speciality;
+
+    int numberOfDoctors, numberOfPatients;
+    vector<Patient> patients; vector<Doctor> doctors; vector<Doctor> sol;
+
+
+
+    ifstream fin("D:\\Exercitii\\Facultate\\netrom\\Repos\\Fork-STL-hands-on.git\\HandsOn-Input.txt");
+
+    fin >> numberOfPatients;
+
+    for (int i = 0; i < numberOfPatients; i++) {
+        string problem, department;
+
+        fin >> problem >> department;
+
+        patients.push_back({ problem, department });
     }
 
-    inFile >> m;
-    vector<Doctor> doctors(m);
-    for (Doctor &d : doctors) {
-        inFile >> d.id >> d.speciality;
+    fin >> numberOfDoctors;
+
+    for (int i = 0; i < numberOfPatients; i++) {
+        string name, department;
+
+        fin >> name >> department;
+
+        doctors.push_back({ name, department });
     }
 
-    for (const Problem &p : problems) {
-        currentProblem = p;
-        auto it = find_if(doctors.begin(), doctors.end(), matchesSpeciality);
+    // for (auto i : patients) {
+    //     cout << i.problem << " " << i.department << "\n";
+    // }
 
-        if (it != doctors.end()) {
-            cout << it->id << " " << p.name << endl;
-            doctors.erase(it);
+    // for (auto i : doctors) {
+    //     cout << i.name << " " << i.department << "\n";
+    // }
+
+    for (vector<Patient>::iterator pIt = patients.begin(); pIt < patients.end(); pIt++) {
+
+        currentDepartment = pIt->department;
+        vector<Doctor>::iterator dIt = find_if(doctors.begin(), doctors.end(), departmentMatches);
+
+        if (dIt != doctors.end()) {
+            dIt->patientsProblem = pIt->problem;
+            sol.push_back(*dIt);
         }
     }
 
-    inFile.close();
-    
-    return 0;
+    for (vector<Doctor>::iterator it = sol.begin(); it < sol.end(); it++) {
+        cout << it->name << " " << it->patientsProblem << "\n";
+    }
+
+
 }
